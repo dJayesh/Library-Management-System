@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <h1>➡️ Issue Book</h1>
+  <p>Issue a book to a library member</p>
+</div>
+
+<div class="card" style="max-width:640px;">
+  <div class="card-title">Issue Details</div>
+  {% if not members %}
+    <div class="empty">
+      <div class="empty-icon">👥</div>
+      <p>No member found. Please register member first. <a href="/members/add" style="color:#0f6e56;">Add Member→</a></p>
+    </div>
+  {% elif not books %}
+    <div class="empty">
+      <div class="empty-icon">📚</div>
+      <p>No books avaliable for issue. </p>
+    </div>
+  {% else %}
+  <form method="POST" action="/issue">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>👥Select member*</label>
+        <select name="member_id" required>
+          <option value="">-- Choose Member --</option>
+          {% for m in members %}
+            <option value="{{ m.id }}">{{ m.id }} — {{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>📚 Select Book *</label>
+        <select name="book_id" required>
+          <option value="">-- Select Book --</option>
+          {% for b in books %}
+            <option value="{{ b.id }}">{{ b.title }} ({{ b.available_copies }} available)</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem; max-width:220px;">
+      <label>📅 Due Date *</label>
+      <input type="date" name="due_date" required value="{{ default_due }}">
+    </div>
+    <button type="submit" class="btn btn-primary">✅ Issue Book</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

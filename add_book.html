@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <h1>📚 ADD NEW BOOKS</h1>
+  <p><a href="/books" style="color:#0f6e56;">← Return to book list</a></p>
+</div>
+
+<div class="card" style="max-width:600px;">
+  <div class="card-title">Add Book details</details></div>
+  <form method="POST" action="/books/add">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>📖 Book Title *</label>
+        <input name="title" required placeholder="e.g. Wings of Fire">
+      </div>
+      <div class="form-group">
+        <label>✍️ Author *</label>
+        <input name="author" required placeholder="e.g. A.P.J. Abdul Kalam">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>🔢 ISBN</label>
+        <input name="isbn" placeholder="e.g. 978-81-7371-146-6">
+      </div>
+      <div class="form-group">
+        <label>📂 Genre</label>
+        <select name="genre">
+          <option>Fiction</option>
+          <option>Non-Fiction</option>
+          <option>Science</option>
+          <option>History</option>
+          <option>Biography</option>
+          <option>Technology</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label>📦 Total Copies</label>
+      <input name="copies" type="number" min="1" value="1" style="max-width:120px;">
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button type="submit" class="btn btn-primary">✅Add Book</button>
+      <a href="/books" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

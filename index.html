@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <h1>📊 Dashboard</h1>
+  <p>Today's Library Overview</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card stat-green">
+    <div class="stat-label">📚 Total Books</div>
+    <div class="stat-value">{{ stats.total_books }}</div>
+  </div>
+  <div class="stat-card stat-blue">
+    <div class="stat-label">👥 Members</div>
+    <div class="stat-value">{{ stats.total_members }}</div>
+  </div>
+  <div class="stat-card stat-amber">
+    <div class="stat-label">➡️ Issued</div>
+    <div class="stat-value">{{ stats.total_issued }}</div>
+  </div>
+  <div class="stat-card stat-red">
+    <div class="stat-label">⚠️ Overdue</div>
+    <div class="stat-value">{{ stats.overdue }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">🕐 Recent Activity</div>
+  {% if recent %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Book</th>
+          <th>Issued On</th>
+          <th>Due Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in recent %}
+        <tr>
+          <td>{{ r.member_name }}</td>
+          <td>{{ r.book_title }}</td>
+          <td>{{ r.issued_on }}</td>
+          <td>{{ r.due_date }}</td>
+          <td>
+            {% if r.status == 'returned' %}
+              <span class="badge badge-success">Returned</span>
+            {% elif r.due_date < today %}
+              <span class="badge badge-danger">Overdue</span>
+            {% else %}
+              <span class="badge badge-warning">Issued</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">📋</div>
+    <p>No Recent Activity Found</p>
+  </div>
+  {% endif %}
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+  <a href="/books/add" class="btn btn-primary" style="justify-content:center; padding:12px;">📚 Add New Book</a>
+  <a href="/members/add" class="btn" style="justify-content:center; padding:12px;">👤 Register New Member</a>
+</div>
+
+{% endblock %}

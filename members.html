@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="topbar">
+  <div class="page-header" style="margin:0">
+    <h1>👥 Members</h1>
+    <p>Registered library members</p>
+  </div>
+  <a href="/members/add" class="btn btn-primary">+ Add Member</a>
+</div>
+
+<div class="card">
+  <form method="GET" action="/members">
+    <div class="search-bar">
+      <input name="q" value="{{ search }}" placeholder="search by Name or Member ID...">
+      <button type="submit" class="btn">🔍 Search</button>
+      {% if search %}<a href="/members" class="btn">✕ Clear</a>{% endif %}
+    </div>
+  </form>
+
+  {% if members %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Member ID</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Joined</th>
+          <th>Books</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in members %}
+        <tr>
+          <td style="color:#aaa;">{{ loop.index }}</td>
+          <td><strong>{{ m.name }}</strong></td>
+          <td><span class="badge badge-info">{{ m.id }}</span></td>
+          <td>{{ m.phone or '—' }}</td>
+          <td style="font-size:12px; color:#666;">{{ m.email or '—' }}</td>
+          <td style="font-size:12px; color:#888;">{{ m.joined_on }}</td>
+          <td>
+            {% if issued_counts.get(m.id, 0) > 0 %}
+              <span class="badge badge-warning">{{ issued_counts[m.id] }} issued</span>
+            {% else %}
+              <span style="color:#aaa; font-size:12px;">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" action="/members/delete/{{ m.id }}" onsubmit="return confirm('Are you sure you want to delete this member?')">
+              <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">👥</div>
+    <p>No Members Found</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

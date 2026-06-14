@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <h1>↩️ Return Book</h1>
+  <p>Manage returned books</p>
+</div>
+
+<div class="card">
+  <div class="card-title">Currently Issued Books</div>
+
+  {% if active_issues %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Book</th>
+          <th>Issued On</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in active_issues %}
+        <tr>
+          <td>{{ r.member_name }}</td>
+          <td><strong>{{ r.book_title }}</strong></td>
+          <td>{{ r.issued_on }}</td>
+          <td>{{ r.due_date }}</td>
+          <td>
+            {% if r.due_date < today %}
+              <span class="badge badge-danger">⚠️ Overdue</span>
+            {% else %}
+              <span class="badge badge-warning">📤 Issued</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" action="/return" onsubmit="return confirm('Return This book?')">
+              <input type="hidden" name="issue_id" value="{{ r.id }}">
+              <button type="submit" class="btn btn-warning btn-sm">↩️ Return</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">✅</div>
+    <p>No books are currently issued</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

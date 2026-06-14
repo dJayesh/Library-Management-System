@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; }
+
+    /* NAV */
+    nav { background: #fff; border-bottom: 1px solid #e5e5e0; padding: 0 2rem; display: flex; align-items: center; gap: 2rem; height: 56px; position: sticky; top: 0; z-index: 100; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; color: #0f6e56; text-decoration: none; }
+    .nav-brand svg { width: 28px; height: 28px; }
+    .nav-links { display: flex; gap: 4px; flex: 1; }
+    .nav-links a { padding: 6px 14px; border-radius: 6px; font-size: 14px; color: #555; text-decoration: none; transition: all 0.15s; }
+    .nav-links a:hover { background: #f5f5f0; color: #1a1a1a; }
+    .nav-links a.active { background: #e1f5ee; color: #0f6e56; font-weight: 500; }
+
+    /* LAYOUT */
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* PAGE HEADER */
+    .page-header { margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 22px; font-weight: 600; }
+    .page-header p { color: #666; font-size: 14px; margin-top: 3px; }
+
+    /* CARDS */
+    .card { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 1rem; color: #333; display: flex; align-items: center; gap: 6px; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+    .stat-card { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 1rem 1.25rem; }
+    .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-value { font-size: 28px; font-weight: 600; }
+    .stat-green .stat-value { color: #0f6e56; }
+    .stat-blue .stat-value { color: #185fa5; }
+    .stat-amber .stat-value { color: #854f0b; }
+    .stat-red .stat-value { color: #a32d2d; }
+
+    /* FORMS */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: #555; }
+    .form-group input, .form-group select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; color: #1a1a1a; background: #fff; width: 100%; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #0f6e56; box-shadow: 0 0 0 3px rgba(15,110,86,0.1); }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #ddd; background: #fff; color: #333; text-decoration: none; transition: all 0.15s; }
+    .btn:hover { background: #f5f5f0; }
+    .btn-primary { background: #0f6e56; color: #fff; border-color: #0f6e56; }
+    .btn-primary:hover { background: #085041; }
+    .btn-danger { color: #a32d2d; border-color: #f09595; background: transparent; padding: 5px 10px; }
+    .btn-danger:hover { background: #fcebeb; }
+    .btn-warning { color: #854f0b; border-color: #fac775; }
+    .btn-warning:hover { background: #faeeda; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; font-size: 11px; font-weight: 600; color: #888; padding: 8px 12px; border-bottom: 1px solid #e5e5e0; text-transform: uppercase; letter-spacing: 0.04em; }
+    td { padding: 10px 12px; border-bottom: 1px solid #f0f0eb; color: #1a1a1a; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafaf7; }
+
+    /* BADGES */
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-success { background: #eaf3de; color: #3b6d11; }
+    .badge-warning { background: #faeeda; color: #854f0b; }
+    .badge-danger { background: #fcebeb; color: #a32d2d; }
+    .badge-info { background: #e1f5ee; color: #0f6e56; }
+    .badge-blue { background: #e6f1fb; color: #185fa5; }
+
+    /* FLASH MESSAGES */
+    .flash-container { margin-bottom: 1rem; }
+    .flash { padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
+    .flash-success { background: #eaf3de; color: #3b6d11; border: 1px solid #c0dd97; }
+    .flash-error { background: #fcebeb; color: #a32d2d; border: 1px solid #f09595; }
+
+    /* SEARCH BAR */
+    .search-bar { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .search-bar input { flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+    .search-bar select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+
+    /* EMPTY STATE */
+    .empty { text-align: center; padding: 2.5rem; color: #aaa; }
+    .empty-icon { font-size: 40px; margin-bottom: 8px; }
+    .empty p { font-size: 13px; }
+
+    /* RECENT TABLE */
+    .recent-title { font-size: 14px; font-weight: 600; margin-bottom: 1rem; }
+
+    /* TOPBAR ACTIONS */
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .topbar h2 { font-size: 16px; font-weight: 600; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-brand">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="28" height="28" rx="6" fill="#e1f5ee"/>
+      <rect x="6" y="7" width="5" height="14" rx="1" fill="#0f6e56"/>
+      <rect x="12" y="7" width="5" height="14" rx="1" fill="#1d9e75"/>
+      <rect x="18" y="7" width="4" height="14" rx="1" fill="#5dcaa5"/>
+    </svg>
+    Library Management System
+  </a>
+  <div class="nav-links">
+    <a href="/" class="{{ 'active' if request.endpoint == 'index' else '' }}">🏠 Dashboard</a>
+    <a href="/books" class="{{ 'active' if request.endpoint in ['books','add_book'] else '' }}">📚 Books</a>
+    <a href="/members" class="{{ 'active' if request.endpoint in ['members','add_member'] else '' }}">👥 Members</a>
+    <a href="/issue" class="{{ 'active' if request.endpoint == 'issue_book' else '' }}">➡️ Issue Book</a>
+    <a href="/return" class="{{ 'active' if request.endpoint == 'return_book' else '' }}">↩️ Return Book</a>
+    <a href="/records" class="{{ 'active' if request.endpoint == 'records' else '' }}">📋 Records</a>
+  </div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for cat, msg in messages %}
+          <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>

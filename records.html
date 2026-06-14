@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <h1>📋 Issue Records</h1>
+  <p>Complete issue and return history</p>
+</div>
+
+<div class="card">
+  <form method="GET" action="/records" style="margin-bottom:1rem;">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <label style="font-size:13px; color:#666; font-weight:500;">Filter by status:</label>
+      <select name="status" onchange="this.form.submit()" style="padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:13px;">
+        <option value="" {{ 'selected' if not status_filter }}>All records</option>
+        <option value="issued" {{ 'selected' if status_filter=='issued' }}>Issued only</option>
+        <option value="returned" {{ 'selected' if status_filter=='returned' }}>Returned only</option>
+      </select>
+      {% if status_filter %}<a href="/records" class="btn btn-sm">✕ Clear</a>{% endif %}
+    </div>
+  </form>
+
+  {% if records %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Member</th>
+          <th>Book</th>
+          <th>Author</th>
+          <th>Issued On</th>
+          <th>Due Date</th>
+          <th>Returned On</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in records %}
+        <tr>
+          <td style="color:#aaa;">{{ loop.index }}</td>
+          <td>{{ r.member_name }}<br><span style="font-size:11px; color:#aaa;">{{ r.member_id }}</span></td>
+          <td><strong>{{ r.book_title }}</strong></td>
+          <td style="color:#666; font-size:12px;">{{ r.author }}</td>
+          <td>{{ r.issued_on }}</td>
+          <td>
+            {{ r.due_date }}
+            {% if r.status == 'issued' and r.due_date < today %}
+              <span class="badge badge-danger" style="margin-left:4px;">Overdue</span>
+            {% endif %}
+          </td>
+          <td>{{ r.returned_on or '—' }}</td>
+          <td>
+            {% if r.status == 'returned' %}
+              <span class="badge badge-success">✅ Returned</span>
+            {% elif r.due_date < today %}
+              <span class="badge badge-danger">⚠️ Overdue</span>
+            {% else %}
+              <span class="badge badge-warning">📤 Issued</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px; color:#aaa; margin-top:12px;">Total: {{ records|length }} record{{ 's' if records|length != 1 }}</p>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">📋</div>
+    <p>No record found</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
